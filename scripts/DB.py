@@ -2,7 +2,7 @@ import firebase_admin
 import time
 from firebase_admin import db
 from firebase_admin import credentials
-cred = credentials.Certificate('/home/parking/Desktop/Algoritmos/scripts/credIoT.json')
+cred = credentials.Certificate('/home/parking/Desktop/raspberry_IoT_parking/scripts/credIoT.json')
 nombreBase= 'rasp_IoT_fireBase'
 auth=firebase_admin.initialize_app(cred,{
     'databaseURL':'https://rasp-iot-parquimetro-default-rtdb.firebaseio.com/'

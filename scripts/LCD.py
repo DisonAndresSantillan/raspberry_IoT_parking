@@ -135,11 +135,9 @@ class LCD(object):
         lcd.write_string('\x04')
         lcd.write_string(f' Placa: {abc}-{num}')
         
-    def showplacaDetectada(user,abc,num):
+    def showPlacaDetectada(user,abc,num,pago):
         lcd.create_char(4, placaTres)
-        lcd.cursor_pos = (1, 3)
-        lcd.write_string('Placa Detectada')
-        lcd.cursor_pos = (2, 0)
+        lcd.cursor_pos = (1, 0)
         lcd.create_char(1, placaUno)
         lcd.write_string('\x01')
         lcd.create_char(2, placaMitad)
@@ -148,15 +146,19 @@ class LCD(object):
         lcd.write_string('\x03')
         lcd.create_char(4, placaTres)
         lcd.write_string('\x04')
-        lcd.write_string(f' Placa: {abc}-{num}')
+        lcd.write_string(f' Placa: {abc}-{num} ')
         lcd.cursor_pos = (0, 0)
-        lcd.write_string(f'Usuario No.{user}')
+        lcd.write_string(f'   Usuario No.{user}   ')
+        lcd.cursor_pos = (2, 0)
+        lcd.write_string('--------------------')
         lcd.cursor_pos = (3, 0)
-        lcd.write_string('REALIZAR PAGO')
+        lcd.write_string(f'PAGO PARKING $:{pago}    ')
     def contTiempo(cont):
         contH=int(cont/3600)
         contM=int((cont-3600*contH)/60)
         contS=int(cont)-int(contH*3600)-int(contM*60)
+        lcd.cursor_pos = (3, 0)
+        lcd.write_string(f'contador: {contH}:{contM}:{contS}')
         return contH,contM,contS
         
     def sumarHoraFin(h1,m1,h2,m2):
@@ -169,9 +171,7 @@ class LCD(object):
             finH+=1
         finH=int(finH)+int(h1)+int(h2)
         return finH,finM
-    def showHora():
-        initH=time.strftime("%H")
-        initM=time.strftime("%M")
+    def showHora(initH,initM):
         lcd.cursor_pos = (1, 0)
         lcd.create_char(5, horaInitUno)
         lcd.write_string('\x05')
@@ -180,14 +180,20 @@ class LCD(object):
         lcd.create_char(7, horaInitDos)
         lcd.write_string('\x07')
         lcd.write_string(f' Inicio: {initH}H{initM}')
+    
+    def getHora():
+        initH=time.strftime("%H")
+        initM=time.strftime("%M")
         return initH,initM
+
     def showTarifa(usd):
         lcd.cursor_pos = (2, 0)
         costoH=int(usd)
-        print(f'costoH={costoH}')
+        #print(f'costoH={costoH}')
         costoM=int((usd-costoH)*100*30/50)
-        print(f'costoM={costoM}')
+        #print(f'costoM={costoM}')
         lcd.write_string(f'$:{usd} USD -> t:{costoH}H{costoM}')
+        return costoH,costoM
     
     def showDisponible():
         lcd.create_char(4, placaTres)
@@ -195,13 +201,29 @@ class LCD(object):
         while(i<=19): 
             lcd.cursor_pos = (0, i)
             lcd.write_string('\x04')
-            lcd.cursor_pos = (3, i)
+            i+=1
+        i=0
+        while(i<=3):
+            lcd.cursor_pos = (i, 0)
+            lcd.write_string('\x04')
+            lcd.cursor_pos = (i, 19)
             lcd.write_string('\x04')
             i+=1
         lcd.cursor_pos = (1, 7)
-        lcd.write_string('Espacio')
+        lcd.write_string('ESPACIO')
         lcd.cursor_pos = (2, 5)
-        lcd.write_string('Disponible')
+        lcd.write_string('DISPONIBLE')
+        lcd.cursor_pos = (3, 3)
+        initH=time.strftime("%H")
+        initM=time.strftime("%M")
+        initS=time.strftime("%S")
+        lcd.create_char(5, horaInitUno)
+        lcd.write_string('\x05')
+        lcd.create_char(6, horaInitMitad)
+        lcd.write_string('\x06')
+        lcd.create_char(7, horaInitDos)
+        lcd.write_string('\x07')
+        lcd.write_string(f'   {initH}:{initM}:{initS}')
 
     def showPago(usd):
         lcd.create_char(4, placaTres)
@@ -212,11 +234,11 @@ class LCD(object):
             lcd.cursor_pos = (3, i)
             lcd.write_string('\x04')
             i+=1
-        lcd.cursor_pos = (1, 2)
-        lcd.write_string('Pago Registrado')
-        lcd.cursor_pos = (2, 5)
+        lcd.cursor_pos = (1, 0)
+        lcd.write_string('  Pago Registrado   ')
+        lcd.cursor_pos = (2, 0)
         p=usd['pago']
-        lcd.write_string(f'$: {p} Usd')
+        lcd.write_string(f'     $: {p} Usd    ')
     
     def clean():
         lcd.clear()
