@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "rasp-iot-parquimetro",
+  "private_key_id": "a3ad679644d00219ec18963a968e90e0d735f58a",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDbEytSNwTLyNMY\nLo9kYwOc2P3pegRyVZ5C4P6vC/ZqqFcxEEXaggUnxm9Q6XT/NuHbm3owb7djdqSO\nj25hKVRBm45/EP1fGdbubEAMTLWDwxOnkE4rHuUcuNr8X6mOdL0ek8P7dixwixne\nW6SIcyBVgiRD181nl8Pk8+Vz8Zd12xGJhbptHhdPTJa7S8MheSkdl/sVPTdLktzK\nOTC5WUUW29gaybnT/BePhxmNR0BAbNko71k8jzI9Ph5aUhk0O8p04DyGOwAzpw5j\n+hlNJ7me8UVciMWvPF7JOkPtcalpSEmHNwg6n+H9ToIyWc3sjvKDoI++7aOeLcNN\na1XaMppjAgMBAAECggEAFZv783Wi3vkVvXZmRYgwxIlw7lVPV/nTDRTFen3LFjU5\nuIi64zVdDdHYjBojJMOEntVkxZ9XbxO2YquKP0JE4d3WvfjujTFuzoDWBoCQjQky\niJ5G36ECB4XCcA99maQxPXFk7Qp4krdd212dyqnUgCrAqgKA692AALcAJKIphwHg\nkJd2ZyS9IUnKpskHiWsbXGQt6Lfc3toBPgCjUwytAeR5EN9yHqm6Nvs8mTZFDt43\ndSj0iBYumO7ufyA/lH6AUEQmyaPzlPl73WiDagJMNTQwHxSHj7WfQ8dbsNWjlE2L\nl5fv9rVMiC0EHkPdDUTKvxXAbtvn2kz7egVGM5XtSQKBgQD+E8N3NP/Qu5eWWiVl\n3R0xn+58kVvL79ekAB7jzowTxttaa93cBzwSZP3cbVl7h/wW6AjZDBx3fS9scr50\nrQAw76aBQAsnrlUpd5vPK3H9WvWpJd2ZanGRlK9SqWb2RQYrsPc27kOTLvX6LnjB\n2BOfwnx1UgwYs/rY91/W1r8gKQKBgQDcu5gMWRSVGr/LjIF0FEcvXihxWhdA1pka\nGTXUdrES4GM3tvCojVXV0KTbc33swGOtd8pqhqGM3jZbpsy9MKRpPH/2Kz+yd52J\nzlDpWKDCFjpng5FO1LHQfvzQ53s/uiSJ8R4JJksw1EOmZdAV4EEb/cUjuiYVWfWK\n9Q1ock8HqwKBgAgsIpFnBwNzxUB0zdck8ZdzCXzAQC+jG1CPIG87aY4JS2zxI0W8\nhdYhoXjBm6s5iIZEGGTC2veM80WNu0qNdgAc9UIbCUDRfrPCwSQ8xYHctyIlsacJ\noXWJTspd4I3zUmt9WbZOm6XUUN0nOYMirB7rZo1vgiwZPexUqKSEa8lhAoGBAJKj\nhYVegI/1r0j4VN/awNe1A8UaBqyqZBe0e9Bj8YsKyp8ux34SNt3OuFaZySRJQ27w\nT+ao/hXpYc9NZmKhN/g5mwDdBnn3gQ8VoycCG/oUbkRqYVQvdNmAI1BdF8HkVXXW\nWw/VAsqzmSWoKa7+xgJkel0bw0UX+EmSNpAWsG31AoGBAOrZTOhYY8ZgYQi+dVkY\nCxWZmOv6sCHtb+bYdDg21EaeMdnIIXDT01QQkkIHOoLRLja4DSUGJ65jkgX2zvWc\n5CcVe+t4vc58Vj9W46f0vT34DVDe79dBQDHdoQTNsMe3+twFNVmBrHleyfl/s0ln\nUitXxIRF0KxBuRrr35jF8z1/\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-wakl2@rasp-iot-parquimetro.iam.gserviceaccount.com",
+  "client_id": "101313003430280253068",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-wakl2%40rasp-iot-parquimetro.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
