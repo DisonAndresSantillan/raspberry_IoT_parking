@@ -1,10 +1,14 @@
 # Raspberry_IoT_parking
 
-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
+# Inicialización FireBase
+Instalando la librería
+$ sudo pip install firebase-admin
 
-# Inicializacion del LCD 
+Más Información>> python:
+https://firebase.google.com/docs/admin/setup?hl=es&authuser=0&_gl=1*55bsey*_ga*ODM3ODYzNTU4LjE2OTc1OTQ0MDQ.*_ga_CW55HF8NVT*MTcwMDAxMzIwMi4yNC4xLjE3MDAwMTMyMzguMjQuMC4w
+# Inicialización del LCD 
 
-Instalando la libreria 
+Instalando la librería 
 
 $ sudo pip install RPLCD
 
