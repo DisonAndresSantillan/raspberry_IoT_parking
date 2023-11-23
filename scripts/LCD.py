@@ -12,6 +12,9 @@ global cont,initH,initM
 cont = 0
 initH = 0
 initM = 0
+
+# limpio el LCD
+lcd.clear()
 placaUno = (
   0b00011,
   0b00110,
@@ -153,25 +156,9 @@ class LCD(object):
         lcd.write_string('--------------------')
         lcd.cursor_pos = (3, 0)
         lcd.write_string(f'PAGO PARKING $:{pago}    ')
-    def contTiempo(cont):
-        contH=int(cont/3600)
-        contM=int((cont-3600*contH)/60)
-        contS=int(cont)-int(contH*3600)-int(contM*60)
-        lcd.cursor_pos = (3, 0)
-        lcd.write_string(f'contador: {contH}:{contM}:{contS}')
-        return contH,contM,contS
-        
-    def sumarHoraFin(h1,m1,h2,m2):
-        
-        finH=0
-        finM=0
-        finM=int(m1)+int(m2)
-        if( finM>60):
-            finM=int(finM)-60
-            finH+=1
-        finH=int(finH)+int(h1)+int(h2)
-        return finH,finM
-    def showHora(initH,initM):
+
+
+    def showHoraIn(initH,initM):
         lcd.cursor_pos = (1, 0)
         lcd.create_char(5, horaInitUno)
         lcd.write_string('\x05')
@@ -257,6 +244,29 @@ class LCD(object):
         lcd.cursor_pos = (2, 1)
         lcd.write_string('Reconociendo Placa')
         
+    def showHoraEnd(initH,initM,costoH,costoM):
+        endH=0;endM=0
+        endM=int(initM)+int(costoM)
+        if( endM>60):
+            endM=int(endM)-60
+            endH+=1
+        endH=int(endH)+int(initH)+int(costoH)
+        lcd.cursor_pos = (3, 0)
+        lcd.write_string(f'Fin:{endH}H{endM}')
+        return endH,endM
+
+    def contTiempo(endH,endM,initH,initM,nowH,nowM,nowS):
+        contNow=nowH*3600+nowM*60+nowS
+        contInit=initH*3600+initM*60
+        contEnd=endH*3600+endM*60
+        cont=int(contEnd)+int(contInit)-int(contNow)
+        contH=int(cont)/3600
+        contM=int((cont-3600*contH)/60)
+        contS=int(cont)-int(contH*3600)-int(contM*60)
+        lcd.cursor_pos = (3, 11)
+        lcd.write_string(f'T:{contH}:{contM}:{contS}')
+        return cont
+        
         
 
 def main(cont):
@@ -269,7 +279,9 @@ def main(cont):
     #costo tarifa hora hora
     #LCD.showTarifa(1.00)
     
-    LCD.showDisponible()
+    #LCD.showDisponible()
+    LCD.showHoraEnd(15,40,1,30)
+    LCD.contTiempo(16,40,0,15,16,47,45)
     
     
     

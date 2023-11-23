@@ -74,34 +74,30 @@ GPIO.add_event_detect(
     bouncetime=250  
 )
 
+#Limpio los caracteres de la LCD
+LCD.LCD.clean()
 
 
 def btn1Usd(usdPago):
     usdPago['pago'] +=1.0
     clicks=usdPago['pago']
-    #LCD.LCD.showPago(usdPago)
+    DB.fireBase.upPago(usdPago['pago'])
     print(f'pago: {clicks}')
-    #sleep(2)
-    #LCD.LCD.clean()
-    #sleep(2)
+
     
 def btn05Usd(usdPago):
     usdPago['pago'] +=0.5
     clicks=usdPago['pago']
-    #LCD.LCD.showPago(usdPago)
+    DB.fireBase.upPago(usdPago['pago'])
     print(f'pago: {clicks}')
-    #sleep(2)
-    #LCD.LCD.clean()
-    #sleep(2)
+
     
 def btn025Usd(usdPago):
     usdPago['pago'] +=0.25
     clicks=usdPago['pago']
-    #LCD.LCD.showPago(usdPago)
+    DB.fireBase.upPago(usdPago['pago'])
     print(f'pago: {clicks}')
-    #sleep(2)
-    #LCD.LCD.clean()
-    #sleep(2)
+
 
 def status(act):
     act['opt']+=1
@@ -136,17 +132,15 @@ def main():
     global auxHora,contHora
     initH=0; initM=0
     #-------------------------------------------------
-    LCD.LCD.showDisponible()
+    sleep(0.5)
     #detecto si aparecio un auto y se esta estacionanado 
     detectPlaca=False
     if(act['opt']>=1):
         if(auxHora==1):
+            #Envio la hora de inicio
+            DB.fireBase.upHoraIn()
             initH,initM=LCD.LCD.getHora()
             auxHora+=1
-        
-        #Actualizo todos los datos
-        print('Actualizando datos ')
-        #updateData(dataB) 
         #Obtengo los valores de la placa mediante la camara
         while(True):
             if(act['opt']==2):
@@ -154,18 +148,20 @@ def main():
                 detectPlaca==True
                 nPlaca=123
                 aPlaca='ABR'
+                DB.fireBase.upPlacaAuto('ABR-123')
                 break
             LCD.LCD.showDetectando()
         #creo el nuevo usuario
         idU=crearUser()
+        DB.fireBase.upIdUser(idU) 
+        #Aqui debo registrar el pago ------------------------------------
         while(True): #detectPlaca==True
             sleep(1)
             if(act['opt']==3):
-                #Aqui debo registrar el pago
                 break
             LCD.LCD.showPlacaDetectada(idU,aPlaca,nPlaca,usdPago['pago'])
             
-        #Muestro el panel de usuario
+        #Muestro el panel de usuario ------------------------------------
         LCD.LCD.clean()
         sleep(1)
         while(True):
@@ -174,13 +170,15 @@ def main():
             
             LCD.LCD.showPlaca(aPlaca,nPlaca)
             costoH,costoM=LCD.LCD.showTarifa(usdPago['pago'])
-            LCD.LCD.showHora(initH,initM)
+            LCD.LCD.showHoraIn(initH,initM)
+            endH,endM=LCD.LCD.showHoraEnd(initH,initM,costoH,costoM)
             # Contador del tiempo restante, transformo todo a seguntos
-            contHora=costoH*3600+costoM*60
+            contHora=1
             while(contHora>=0):
-                contHora-=1
-                sleep(1)
-                contH,contM,contS=LCD.LCD.contTiempo(contHora)
+                nowH=int(time.strftime("%H"))
+                nowM=int(time.strftime("%M"))
+                nowS=int(time.strftime("%S"))
+                contHora=LCD.LCD.contTiempo(endH,endM,initH,initM,nowH,nowM,nowS)
             break
         #------------------------------------------------------------------------------------------------
                 
@@ -190,6 +188,7 @@ def main():
         #Reinicio el sistema
         auxHora=0
         contHora=0
+        updateData(dataB)
                 
     else:
         LCD.LCD.showDisponible()
@@ -201,6 +200,6 @@ def main():
     
     
 if __name__ == '__main__':
-    while(1):
+    while(True):
         main()
         
