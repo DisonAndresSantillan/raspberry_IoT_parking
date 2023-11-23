@@ -59,7 +59,7 @@ class fireBase(object):
         ref.update({ 
             'idSudo' : id 
             }) 
-        print('Id Sudo update') 
+        print('Id Sudo update')
     def upHoraIn(): 
         """ 
         Actualiza la actual de llegada  
@@ -79,10 +79,7 @@ class fireBase(object):
         al estacionamiento
         """ 
         dolar = int(tarifa)
-        if(dolar>=1):
-            moneda=tarifa-dolar
-        else:
-            moneda=dolar
+        moneda=tarifa-dolar
         pagoUsd=dolar*1000+moneda*100
         ref = db.reference(nombreBase)
         ref.update({
@@ -114,12 +111,12 @@ class fireBase(object):
 def main():
     pass
     # Inicialización de datos
-    fireBase.upIdUser(159)
+    #fireBase.upIdUser(159)
     #fireBase.upIdAgent(345)
     #fireBase.upIdSudo('343fskdf')
     fireBase.upHoraIn()
-    fireBase.upPago(1.80)
-    fireBase.upPlacaAuto('ASR-123')
+    #fireBase.upPago(1.25)
+    #fireBase.upPlacaAuto('ASR-123')
     
         
 if __name__ == '__main__':
