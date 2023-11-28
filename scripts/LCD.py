@@ -15,6 +15,7 @@ initM = 0
 
 # limpio el LCD
 lcd.clear()
+lcd.home()
 placaUno = (
   0b00011,
   0b00110,
@@ -124,10 +125,16 @@ class LCD(object):
             lcd.write_string(text)      
         for i in range(len(text) - 20 + 1):
             framebuffer[1] = text[i:i+20]
-            write_to_lcd(lcd, framebuffer, 20)
+            LCD.write_to_lcd(lcd, framebuffer, 20)
             sleep(0.8)
-    def showPlaca(abc,num):
-        lcd.cursor_pos = (0, 0)
+    def showDataUser(idU,abc,num):
+        lcd.cursor_pos = (0, 2)
+        lcd.write_string(f'DATOS DE USUARIO:')
+        lcd.cursor_pos = (1, 6)
+        lcd.write_string(f'ID:   {idU}')
+        lcd.cursor_pos = (2, 2)
+        lcd.write_string(f' Placa: {abc}-{num}')
+        lcd.cursor_pos = (3, 8)
         lcd.create_char(1, placaUno)
         lcd.write_string('\x01')
         lcd.create_char(2, placaMitad)
@@ -136,7 +143,8 @@ class LCD(object):
         lcd.write_string('\x03')
         lcd.create_char(4, placaTres)
         lcd.write_string('\x04')
-        lcd.write_string(f' Placa: {abc}-{num}')
+        lcd.cursor_pos = (3, 17)
+        lcd.write_string('1/4')
         
     def showPlacaDetectada(user,abc,num,pago):
         lcd.create_char(4, placaTres)
@@ -157,29 +165,34 @@ class LCD(object):
         lcd.cursor_pos = (3, 0)
         lcd.write_string(f'PAGO PARKING $:{pago}    ')
 
+    
+    def getHora():
+        initH=int(time.strftime("%H"))
+        initM=int(time.strftime("%M"))
+        return initH,initM
 
-    def showHoraIn(initH,initM):
-        lcd.cursor_pos = (1, 0)
+    def showDataTarifa(usd):
+        lcd.cursor_pos = (0, 2)
+        lcd.write_string('DATOS TARIFARIOS')
+        lcd.cursor_pos = (1, 4)
+        lcd.write_string(f'Pago : {usd} USD')
+        costoH=int(usd)
+        #print(f'costoH={costoH}')
+        lcd.cursor_pos = (2,3)
+        costoM=int((usd-costoH)*100*30/50)
+        if(usd<1.0):
+            lcd.write_string(f'Tiempo:  {costoM} mins')
+        else:
+            lcd.write_string(f'Tiempo: {costoH}h{costoM}mins')
+        lcd.cursor_pos = (3, 9)
         lcd.create_char(5, horaInitUno)
         lcd.write_string('\x05')
         lcd.create_char(6, horaInitMitad)
         lcd.write_string('\x06')
         lcd.create_char(7, horaInitDos)
         lcd.write_string('\x07')
-        lcd.write_string(f' Inicio: {initH}H{initM}')
-    
-    def getHora():
-        initH=time.strftime("%H")
-        initM=time.strftime("%M")
-        return initH,initM
-
-    def showTarifa(usd):
-        lcd.cursor_pos = (2, 0)
-        costoH=int(usd)
-        #print(f'costoH={costoH}')
-        costoM=int((usd-costoH)*100*30/50)
-        #print(f'costoM={costoM}')
-        lcd.write_string(f'$:{usd} USD -> t:{costoH}H{costoM}')
+        lcd.cursor_pos = (3, 17)
+        lcd.write_string('2/4')
         return costoH,costoM
     
     def showDisponible():
@@ -228,6 +241,7 @@ class LCD(object):
         lcd.write_string(f'     $: {p} Usd    ')
     
     def clean():
+        lcd.home()
         lcd.clear()
 
     def showDetectando():
@@ -255,65 +269,57 @@ class LCD(object):
         lcd.write_string(f'Fin:{endH}H{endM}')
         return endH,endM
 
-    def contTiempo(endH,endM,initH,initM,nowH,nowM,nowS):
-        contNow=nowH*3600+nowM*60+nowS
-        contInit=initH*3600+initM*60
-        contEnd=endH*3600+endM*60
-        cont=int(contEnd)+int(contInit)-int(contNow)
-        contH=int(cont)/3600
+    def showContTiempo(endH,endM,nowH,nowM,nowS):
+        contNow=int(nowH*3600+nowM*60+nowS)
+        contEnd=int(endH*3600+endM*60)
+        cont=int(contEnd-contNow)
+        contH=int(cont/3600)
         contM=int((cont-3600*contH)/60)
         contS=int(cont)-int(contH*3600)-int(contM*60)
-        lcd.cursor_pos = (3, 11)
-        lcd.write_string(f'T:{contH}:{contM}:{contS}')
+        lcd.cursor_pos = (0, 1)
+        lcd.write_string('TIEMPO DISPONIBLE')
+        lcd.cursor_pos = (1, 3)
+        lcd.write_string(f'Entrada : 12H00')
+        lcd.cursor_pos = (2, 4)
+        lcd.write_string(f'Salida : 12H00')
+        
+        
+        lcd.cursor_pos = (3, 2)
+        lcd.create_char(5, horaInitUno)
+        lcd.write_string('\x05')
+        lcd.create_char(6, horaInitMitad)
+        lcd.write_string('\x06')
+        lcd.create_char(7, horaInitDos)
+        lcd.write_string('\x07')
+        lcd.write_string(f' Time:{contH}:{contM}:{contS}')
         return cont
         
         
 
-def main(cont):
+def main():
     #La placa debe mostrarse del algoritmo de reconocimiento
-    #num=549
-    #abe='PRG'
-    #LCD.showPlaca(abe,num)
-    #hora de reconocimiento
-    #initH,initM=LCD.showHora()
+    
+    LCD.showContTiempo(20,15,19,49,10)
+    sleep(15)
+    LCD.clean()
+    num=549
+    abe='PRG'
+    LCD.showDataUser(123,abe,num)
     #costo tarifa hora hora
-    #LCD.showTarifa(1.00)
-    
-    #LCD.showDisponible()
-    LCD.showHoraEnd(15,40,1,30)
-    LCD.contTiempo(16,40,0,15,16,47,45)
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    #tiempo de salida y contador
-    """    
-        cont=costoH*3600+costoM*60#costo en segundos
-        while(cont>=0):
-            contH,contM,contS=contTiempo(cont)
-            finH,finM=sumarHoraFin(initH,initM,costoH,costoM)
-            if(contS%10==0):
-                lcd.cursor_pos = (3, 0)
-                lcd.write_string(f'Hora Salida: {finH}H{finM}')
-            else:
-                lcd.cursor_pos = (3, 0)
-                lcd.write_string(f'Cont: {contH}:{contM}:{contS}')
-            cont-=1
-            sleep(1)
-            lcd.cursor_pos = (3, 0)
-            lcd.write_string('                   ')
-        
-        #lcd.cursor_pos = (0, 3)
-        #long_text('Sistema de gestios de parqueaderos, ciudad de Santa Elena')
-    """
+    sleep(5)
+    LCD.clean()
+    LCD.showDataTarifa(1.05)
+    sleep(5)
+    LCD.clean()
+    LCD.showDisponible()
+    sleep(5)
+    LCD.clean()
+    #text='Entrada: 15H00 -> Salida: 14H19'
+    LCD.showContTiempo(20,15,19,49,10)
+    sleep(5)
+    LCD.clean()
     
     
 if __name__ == "__main__":
-    main(cont)
+    while(True):
+        main()

@@ -14,9 +14,8 @@ auxHora=1
 contHora=0
 contPago = 5*60 #10 minutos
 
-#Configuracion interrupciones (botones)
-#configuro pin 37
-BUTTON_PIN = 37  
+#Configuracion interrupciones (botones)#configuro pin 37 -> 1usd
+BUTTON_PIN = 37
 # Set GPIO mode to BOARD to use pin numbers
 GPIO.setmode(GPIO.BOARD)  
 GPIO.setup(BUTTON_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP) 
@@ -30,7 +29,7 @@ GPIO.add_event_detect(
 )
 
 #-----------------------------------------------------------
-#configuro pin 35
+#configuro pin 35 -> 0.50ctvs
 BUTTON_PIN = 35
 # Set GPIO mode to BOARD to use pin numbers
 GPIO.setmode(GPIO.BOARD)  
@@ -44,9 +43,8 @@ GPIO.add_event_detect(
     bouncetime=250  
 )
 
-#-----------------------------------------------------------
-#configuro pin 33
-BUTTON_PIN = 33
+#configuro pin 29 -> 0.25ctv
+BUTTON_PIN = 29
 # Set GPIO mode to BOARD to use pin numbers
 GPIO.setmode(GPIO.BOARD)  
 GPIO.setup(BUTTON_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP) 
@@ -60,7 +58,23 @@ GPIO.add_event_detect(
 )
 
 #-----------------------------------------------------------
-#configuro pin 31
+#configuro pin 33 -> Salir
+BUTTON_PIN = 33
+# Set GPIO mode to BOARD to use pin numbers
+GPIO.setmode(GPIO.BOARD)  
+GPIO.setup(BUTTON_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP) 
+# Detect button event on rising edge
+GPIO.add_event_detect(  
+    BUTTON_PIN, GPIO.RISING,
+    # Use lambda to pass parameters
+    callback=lambda x: btnSalir(usdPago),
+    # Use bouncetime to avoid extra clicks
+    bouncetime=250  
+)
+
+
+#-----------------------------------------------------------
+#configuro pin 31 -> Opciones
 BUTTON_PIN = 31
 # Set GPIO mode to BOARD to use pin numbers
 GPIO.setmode(GPIO.BOARD)  
@@ -69,13 +83,10 @@ GPIO.setup(BUTTON_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.add_event_detect(  
     BUTTON_PIN, GPIO.RISING,
     # Use lambda to pass parameters
-    callback=lambda x: status(act),
+    callback=lambda x: btnOpt(act),
     # Use bouncetime to avoid extra clicks
     bouncetime=250  
 )
-
-#Limpio los caracteres de la LCD
-LCD.LCD.clean()
 
 
 def btn1Usd(usdPago):
@@ -99,7 +110,10 @@ def btn025Usd(usdPago):
     print(f'pago: {clicks}')
 
 
-def status(act):
+def btnSalir(usdPago):
+    pass
+
+def btnOpt(act):
     act['opt']+=1
     if(act['opt']>4):
         act['opt']=0
@@ -167,19 +181,19 @@ def main():
         while(True):
             if(act['opt']==4):
                 break
-            
-            LCD.LCD.showPlaca(aPlaca,nPlaca)
-            costoH,costoM=LCD.LCD.showTarifa(usdPago['pago'])
-            LCD.LCD.showHoraIn(initH,initM)
-            endH,endM=LCD.LCD.showHoraEnd(initH,initM,costoH,costoM)
+            pass
+            #LCD.LCD.showDataUser(idU,aPlaca,nPlaca)
+            #costoH,costoM=LCD.LCD.showDataTarifa(usdPago['pago'])
+            #LCD.LCD.showHoraIn(initH,initM)
+            #endH,endM=LCD.LCD.showHoraEnd(initH,initM,costoH,costoM)
             # Contador del tiempo restante, transformo todo a seguntos
-            contHora=1
-            while(contHora>=0):
-                nowH=int(time.strftime("%H"))
-                nowM=int(time.strftime("%M"))
-                nowS=int(time.strftime("%S"))
-                contHora=LCD.LCD.contTiempo(endH,endM,initH,initM,nowH,nowM,nowS)
-            break
+            #contHora=1
+            #while(contHora>=0):
+                #nowH=int(time.strftime("%H"))
+                #nowM=int(time.strftime("%M"))
+                #nowS=int(time.strftime("%S"))
+                #contHora=LCD.LCD.showContTiempo(endH,endM,nowH,nowM,nowS)
+            #break
         #------------------------------------------------------------------------------------------------
                 
             
@@ -196,8 +210,9 @@ def main():
     
  
         
-
-    
+#Inicialización
+LCD.LCD.clean()
+updateData(dataB)
     
 if __name__ == '__main__':
     while(True):

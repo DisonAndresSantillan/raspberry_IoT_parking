@@ -9,24 +9,38 @@ class BTN(object):
     def btn1Usd(usdPago):
         usdPago['pago'] +=1.0
         clicks=usdPago['pago']
-        print(f'pago: {clicks}')
+        print('1')
         return usdPago
     def btn05Usd(usdPago):
         usdPago['pago'] +=0.5
         clicks=usdPago['pago']
-        print(f'pago: {clicks}')
+        print('0.5')
     def btn025Usd(usdPago):
         usdPago['pago'] +=0.25
         clicks=usdPago['pago']
-        print(f'pago: {clicks}')
+        print('0.25')
+        return usdPago
+    
+    def btnSalir(usdPago):
+        print('Salir')
+        return usdPago
+
+    def btnOpt(usdPago):
+        print('Opciones')
         return usdPago
 
 
 def button_pressed(usdPago):
     usdPago += 1
 
-#configuro pin 37
-BUTTON_PIN = 37  
+
+
+
+
+
+
+#configuro pin 37 -> 1usd
+BUTTON_PIN = 37
 # Set GPIO mode to BOARD to use pin numbers
 GPIO.setmode(GPIO.BOARD)  
 GPIO.setup(BUTTON_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP) 
@@ -40,7 +54,7 @@ GPIO.add_event_detect(
 )
 
 #-----------------------------------------------------------
-#configuro pin 35
+#configuro pin 35 -> 0.50ctvs
 BUTTON_PIN = 35
 # Set GPIO mode to BOARD to use pin numbers
 GPIO.setmode(GPIO.BOARD)  
@@ -54,9 +68,8 @@ GPIO.add_event_detect(
     bouncetime=250  
 )
 
-#-----------------------------------------------------------
-#configuro pin 33
-BUTTON_PIN = 33
+#configuro pin 29 -> 0.25ctv
+BUTTON_PIN = 29
 # Set GPIO mode to BOARD to use pin numbers
 GPIO.setmode(GPIO.BOARD)  
 GPIO.setup(BUTTON_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP) 
@@ -68,6 +81,38 @@ GPIO.add_event_detect(
     # Use bouncetime to avoid extra clicks
     bouncetime=250  
 )
+
+#-----------------------------------------------------------
+#configuro pin 33 -> Salir
+BUTTON_PIN = 33
+# Set GPIO mode to BOARD to use pin numbers
+GPIO.setmode(GPIO.BOARD)  
+GPIO.setup(BUTTON_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP) 
+# Detect button event on rising edge
+GPIO.add_event_detect(  
+    BUTTON_PIN, GPIO.RISING,
+    # Use lambda to pass parameters
+    callback=lambda x: BTN.btnSalir(usdPago),
+    # Use bouncetime to avoid extra clicks
+    bouncetime=250  
+)
+
+
+#-----------------------------------------------------------
+#configuro pin 31 -> Opciones
+BUTTON_PIN = 31
+# Set GPIO mode to BOARD to use pin numbers
+GPIO.setmode(GPIO.BOARD)  
+GPIO.setup(BUTTON_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP) 
+# Detect button event on rising edge
+GPIO.add_event_detect(  
+    BUTTON_PIN, GPIO.RISING,
+    # Use lambda to pass parameters
+    callback=lambda x: BTN.btnOpt(usdPago),
+    # Use bouncetime to avoid extra clicks
+    bouncetime=250  
+)
+
 
 def main():
     print("Mostrar pago cuando se presione los botones.")
