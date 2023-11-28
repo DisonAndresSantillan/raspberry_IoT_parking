@@ -1,16 +1,13 @@
-#Libraries
 import RPi.GPIO as GPIO
 import time
 
-#GPIO Mode (BOARD / BCM)
-GPIO.setmode(GPIO.BCM)
-
 #set GPIO Pins
 GPIO_TRIGGER = 11
-GPIO_ECHO = 0
-
-#set GPIO direction (IN / OUT)
+GPIO.setmode(GPIO.BCM)
 GPIO.setup(GPIO_TRIGGER, GPIO.OUT)
+
+GPIO_ECHO = 0
+GPIO.setmode(GPIO.BCM)
 GPIO.setup(GPIO_ECHO, GPIO.IN)
 
 def distance():
@@ -41,6 +38,7 @@ def distance():
     return distance
 
 if __name__ == '__main__':
+    dist=0
     try:
         while True:
             dist = distance()

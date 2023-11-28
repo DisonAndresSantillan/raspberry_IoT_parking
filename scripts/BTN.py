@@ -4,111 +4,108 @@ global usdPago, pin1Btn,pin05Btn,pin025Btn
 pin1Btn=0;pin05Btn=0;pin025Btn=0
 #creo un dict para guardar los pagos
 usdPago={'pago':0}
+act = {'opt':0};
 
-class BTN(object):
-    def btn1Usd(usdPago):
-        usdPago['pago'] +=1.0
-        clicks=usdPago['pago']
-        print('1')
-        return usdPago
-    def btn05Usd(usdPago):
-        usdPago['pago'] +=0.5
-        clicks=usdPago['pago']
-        print('0.5')
-    def btn025Usd(usdPago):
-        usdPago['pago'] +=0.25
-        clicks=usdPago['pago']
-        print('0.25')
-        return usdPago
+
+def btn1Usd(usdPago):
+    usdPago['pago'] +=1.0
+    clicks=usdPago['pago']
+    print('1')
+    return usdPago
+def btn05Usd(usdPago):
+    usdPago['pago'] +=0.5
+    clicks=usdPago['pago']
+    print('0.5')
+def btn025Usd(usdPago):
+    usdPago['pago'] +=0.25
+    clicks=usdPago['pago']
+    print('0.25')
+    return usdPago
     
-    def btnSalir(usdPago):
-        print('Salir')
-        return usdPago
+def btnSalir(usdPago):
+    print('Salir')
+    return usdPago
 
-    def btnOpt(usdPago):
-        print('Opciones')
-        return usdPago
-
-
-def button_pressed(usdPago):
-    usdPago += 1
-
+def btnOpt(act):
+    act['opt']+=1
+    if(act['opt']>4):
+        act['opt']=0
+    clicks=act['opt']
+    print(f'opciones: {clicks}')
 
 
-
-
-
-
-#configuro pin 37 -> 1usd
-BUTTON_PIN = 37
-# Set GPIO mode to BOARD to use pin numbers
-GPIO.setmode(GPIO.BOARD)  
+# CONFIG INTERRUPCIONES
+# 1usd
+BUTTON_PIN = 26 
+# Set GPIO mode to BCM
+GPIO.setmode(GPIO.BCM)  
 GPIO.setup(BUTTON_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP) 
 # Detect button event on rising edge
 GPIO.add_event_detect(  
     BUTTON_PIN, GPIO.RISING,
     # Use lambda to pass parameters
-    callback=lambda x: BTN.btn1Usd(usdPago),
+    callback=lambda x: btn1Usd(usdPago),
     # Use bouncetime to avoid extra clicks
     bouncetime=250  
 )
 
 #-----------------------------------------------------------
-#configuro pin 35 -> 0.50ctvs
-BUTTON_PIN = 35
-# Set GPIO mode to BOARD to use pin numbers
-GPIO.setmode(GPIO.BOARD)  
+# 0.50ctvs
+BUTTON_PIN = 19
+# Set GPIO mode to BCM
+GPIO.setmode(GPIO.BCM)  
 GPIO.setup(BUTTON_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP) 
 # Detect button event on rising edge
 GPIO.add_event_detect(  
     BUTTON_PIN, GPIO.RISING,
     # Use lambda to pass parameters
-    callback=lambda x: BTN.btn05Usd(usdPago),
+    callback=lambda x: btn05Usd(usdPago),
     # Use bouncetime to avoid extra clicks
     bouncetime=250  
 )
 
-#configuro pin 29 -> 0.25ctv
-BUTTON_PIN = 29
-# Set GPIO mode to BOARD to use pin numbers
-GPIO.setmode(GPIO.BOARD)  
+#--------------------------------------------------------
+# 0.25ctv
+BUTTON_PIN = 5
+# Set GPIO mode to BCM
+GPIO.setmode(GPIO.BCM)  
 GPIO.setup(BUTTON_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP) 
 # Detect button event on rising edge
 GPIO.add_event_detect(  
     BUTTON_PIN, GPIO.RISING,
     # Use lambda to pass parameters
-    callback=lambda x: BTN.btn025Usd(usdPago),
+    callback=lambda x: btn025Usd(usdPago),
     # Use bouncetime to avoid extra clicks
     bouncetime=250  
 )
 
 #-----------------------------------------------------------
-#configuro pin 33 -> Salir
-BUTTON_PIN = 33
-# Set GPIO mode to BOARD to use pin numbers
-GPIO.setmode(GPIO.BOARD)  
+# Salir
+BUTTON_PIN = 13
+# Set GPIO mode to BCM
+GPIO.setmode(GPIO.BCM)  
 GPIO.setup(BUTTON_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP) 
 # Detect button event on rising edge
 GPIO.add_event_detect(  
     BUTTON_PIN, GPIO.RISING,
     # Use lambda to pass parameters
-    callback=lambda x: BTN.btnSalir(usdPago),
+    callback=lambda x: btnSalir(usdPago),
     # Use bouncetime to avoid extra clicks
     bouncetime=250  
 )
 
 
 #-----------------------------------------------------------
-#configuro pin 31 -> Opciones
-BUTTON_PIN = 31
-# Set GPIO mode to BOARD to use pin numbers
-GPIO.setmode(GPIO.BOARD)  
+# Opciones
+BUTTON_PIN = 6
+# Set GPIO mode to BCM
+GPIO.setmode(GPIO.BCM)  
 GPIO.setup(BUTTON_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP) 
 # Detect button event on rising edge
 GPIO.add_event_detect(  
     BUTTON_PIN, GPIO.RISING,
     # Use lambda to pass parameters
-    callback=lambda x: BTN.btnOpt(usdPago),
+    callback=lambda x: btnOpt(act),
     # Use bouncetime to avoid extra clicks
     bouncetime=250  
 )

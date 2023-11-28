@@ -14,10 +14,11 @@ auxHora=1
 contHora=0
 contPago = 5*60 #10 minutos
 
-#Configuracion interrupciones (botones)#configuro pin 37 -> 1usd
-BUTTON_PIN = 37
-# Set GPIO mode to BOARD to use pin numbers
-GPIO.setmode(GPIO.BOARD)  
+# CONFIG INTERRUPCIONES
+# 1usd
+BUTTON_PIN = 26 
+# Set GPIO mode to BCM
+GPIO.setmode(GPIO.BCM)  
 GPIO.setup(BUTTON_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP) 
 # Detect button event on rising edge
 GPIO.add_event_detect(  
@@ -29,10 +30,10 @@ GPIO.add_event_detect(
 )
 
 #-----------------------------------------------------------
-#configuro pin 35 -> 0.50ctvs
-BUTTON_PIN = 35
-# Set GPIO mode to BOARD to use pin numbers
-GPIO.setmode(GPIO.BOARD)  
+# 0.50ctvs
+BUTTON_PIN = 19
+# Set GPIO mode to BCM
+GPIO.setmode(GPIO.BCM)  
 GPIO.setup(BUTTON_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP) 
 # Detect button event on rising edge
 GPIO.add_event_detect(  
@@ -43,10 +44,11 @@ GPIO.add_event_detect(
     bouncetime=250  
 )
 
-#configuro pin 29 -> 0.25ctv
-BUTTON_PIN = 29
-# Set GPIO mode to BOARD to use pin numbers
-GPIO.setmode(GPIO.BOARD)  
+#--------------------------------------------------------
+# 0.25ctv
+BUTTON_PIN = 5
+# Set GPIO mode to BCM
+GPIO.setmode(GPIO.BCM)  
 GPIO.setup(BUTTON_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP) 
 # Detect button event on rising edge
 GPIO.add_event_detect(  
@@ -58,26 +60,26 @@ GPIO.add_event_detect(
 )
 
 #-----------------------------------------------------------
-#configuro pin 33 -> Salir
-BUTTON_PIN = 33
-# Set GPIO mode to BOARD to use pin numbers
-GPIO.setmode(GPIO.BOARD)  
+# Salir
+BUTTON_PIN = 13
+# Set GPIO mode to BCM
+GPIO.setmode(GPIO.BCM)  
 GPIO.setup(BUTTON_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP) 
 # Detect button event on rising edge
 GPIO.add_event_detect(  
     BUTTON_PIN, GPIO.RISING,
     # Use lambda to pass parameters
-    callback=lambda x: btnSalir(usdPago),
+    callback=lambda x: btnSalir(act),
     # Use bouncetime to avoid extra clicks
     bouncetime=250  
 )
 
 
 #-----------------------------------------------------------
-#configuro pin 31 -> Opciones
-BUTTON_PIN = 31
-# Set GPIO mode to BOARD to use pin numbers
-GPIO.setmode(GPIO.BOARD)  
+# Opciones
+BUTTON_PIN = 6
+# Set GPIO mode to BCM
+GPIO.setmode(GPIO.BCM)  
 GPIO.setup(BUTTON_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP) 
 # Detect button event on rising edge
 GPIO.add_event_detect(  
@@ -87,7 +89,6 @@ GPIO.add_event_detect(
     # Use bouncetime to avoid extra clicks
     bouncetime=250  
 )
-
 
 def btn1Usd(usdPago):
     usdPago['pago'] +=1.0
@@ -110,8 +111,9 @@ def btn025Usd(usdPago):
     print(f'pago: {clicks}')
 
 
-def btnSalir(usdPago):
-    pass
+def btnSalir(act):
+    act['opt']=4
+    print('press Salir')
 
 def btnOpt(act):
     act['opt']+=1
@@ -146,7 +148,10 @@ def main():
     global auxHora,contHora
     initH=0; initM=0
     #-------------------------------------------------
-    sleep(0.5)
+    p=usdPago['pago']
+    print(f'usd: {p}')
+    sleep(1)
+    """
     #detecto si aparecio un auto y se esta estacionanado 
     detectPlaca=False
     if(act['opt']>=1):
@@ -207,7 +212,7 @@ def main():
     else:
         LCD.LCD.showDisponible()
     
-    
+    """
  
         
 #Inicialización
