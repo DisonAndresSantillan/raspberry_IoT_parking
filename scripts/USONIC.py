@@ -10,7 +10,7 @@ GPIO_ECHO = 0
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(GPIO_ECHO, GPIO.IN)
 
-def distance():
+def distancia():
     # set Trigger to HIGH
     GPIO.output(GPIO_TRIGGER, True)
 
@@ -41,7 +41,7 @@ if __name__ == '__main__':
     dist=0
     try:
         while True:
-            dist = distance()
+            dist = distancia()
             print ("Measured Distance = %.1f cm" % dist)
             time.sleep(1)
 

@@ -3,10 +3,10 @@ import LCD
 import RPi.GPIO as GPIO
 import random
 import time
-from time import sleep 
+from time import sleep
 """Código principal 
 """ 
-dataB={'idAgent':'agentTran92','idSudo':'superU051','idUser':0,'llegadaHora':0,'pagoUsd':0,'placaAuto':''} 
+dataB={'idAgent':'agentTran92','idSudo':'superU051','idUser':0,'llegadaHora':0,'pagoUsd':0,'placaAuto':'','distAuto':40}
 global btn1Usd, act, contPago, btn05Usd, btn025Usd, usdPago, auxHora, contHora
 act = {'opt':0};
 usdPago={'pago':0}
@@ -90,6 +90,19 @@ GPIO.add_event_detect(
     bouncetime=250  
 )
 
+
+# CONFIGURO EL SENSOR ULTRASONICO ---------------------------
+#set GPIO Pins
+GPIO_TRIGGER = 11
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(GPIO_TRIGGER, GPIO.OUT)
+
+GPIO_ECHO = 0
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(GPIO_ECHO, GPIO.IN)
+
+
+# FUNCIONES -------------------------------------------------
 def btn1Usd(usdPago):
     usdPago['pago'] +=1.0
     clicks=usdPago['pago']
@@ -121,6 +134,27 @@ def btnOpt(act):
         act['opt']=0
     clicks=act['opt']
     print(f'opciones: {clicks}')
+    
+def distancia():
+    # set Trigger to HIGH
+    GPIO.output(GPIO_TRIGGER, True)
+    # set Trigger after 0.01ms to LOW
+    time.sleep(0.00001)
+    GPIO.output(GPIO_TRIGGER, False)
+    StartTime = time.time()
+    StopTime = time.time()
+    # save StartTime
+    while GPIO.input(GPIO_ECHO) == 0:
+        StartTime = time.time()
+    # save time of arrival
+    while GPIO.input(GPIO_ECHO) == 1:
+        StopTime = time.time()
+    # time difference between start and arrival
+    TimeElapsed = StopTime - StartTime
+    # multiply with the sonic speed (34300 cm/s)
+    # and divide by 2, because there and back
+    distance = (TimeElapsed * 34300) / 2
+    return distance
 
 
 def updateData(db): 
@@ -149,7 +183,8 @@ def main():
     initH=0; initM=0
     #-------------------------------------------------
     p=usdPago['pago']
-    print(f'usd: {p}')
+    dist=distancia()
+    print(f'usd: {p}, distancia ={dist}')
     sleep(1)
     """
     #detecto si aparecio un auto y se esta estacionanado 
