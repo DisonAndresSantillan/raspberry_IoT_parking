@@ -1,11 +1,12 @@
 import cv2
 import numpy as np
 import pytesseract
+import re
 from pytesseract import Output
 
 ubiFoto='/home/parking/Desktop/raspberry_IoT_parking/scripts/captura.jpg'
 
-class OpenCv(object):
+class OpenCv(object): 
     
     def captFoto():
         """
@@ -25,7 +26,7 @@ class OpenCv(object):
         cam=cv2.VideoCapture(0)
         while True:
             ret,frame=cam.read()
-            frame=cv2.resize(frame,(1200,900))
+            #frame=cv2.resize(frame,(1200,900))
             color=cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             cv2.imshow("Preview",color)
             
@@ -35,9 +36,11 @@ class OpenCv(object):
         cam.release()
         cv2.destroyAllWindows()
         
-    def captVideoTexto():
+    def captTexto():
+            
         cap = cv2.VideoCapture(0)
         cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
+
 
         while True:
             # Captura de cuadro por cuadro
@@ -50,22 +53,37 @@ class OpenCv(object):
                     (text, x, y, w, h) = (d['text'][i], d['left'][i], d['top'][i], d['width'][i], d['height'][i])
                     # no mostrar texto vacio
                     if text and text.strip() != "":
-                        print(text)
+                        print("texto:",text,"# letras:",len(text))
+                        #---------Verificar placa-------
+                        patron = r'^[A-Z]{3}-\d{3}$'
+                        if re.match(patron, text):
+                            break
+                        #--------------------------
                         cuadro = cv2.rectangle(cuadro, (x, y), (x + w, y + h), (0, 255, 0), 2)
                         cuadro = cv2.putText(cuadro, text, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 255), 3)
-         
+            patron = r'^[A-Z]{3}-\d{3}$'
+            if re.match(patron, text):
+                break   
             # Abre ventana y muestra resultado
             cv2.imshow('cuadro', cuadro)
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
-         
+
+
+        #print("la placa reconocida es: ",text) 
         cap.release()
-        cv2.destroyAllWindows() 
+        cv2.destroyAllWindows()
+        return text
         
         
     
 def main():
-    OpenCv.captVideoTexto()
+    placa=OpenCv.captTexto()
+    print("la placa reconocida es: ",placa)
+    # Placa a guardar
+    nombre_archivo = "placa.txt"
+    with open(nombre_archivo, "w") as archivo:
+        archivo.write(placa)
     #OpenCv.captFoto()
     #OpenCv.captVideo()
 

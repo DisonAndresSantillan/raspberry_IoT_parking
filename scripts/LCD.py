@@ -279,9 +279,9 @@ class LCD(object):
         lcd.cursor_pos = (0, 1)
         lcd.write_string('TIEMPO DISPONIBLE')
         lcd.cursor_pos = (1, 3)
-        lcd.write_string(f'Entrada : {initH}:{initM}')
+        lcd.write_string(f'Entrada : {initH}:{initM} ')
         lcd.cursor_pos = (2, 4)
-        lcd.write_string(f'Salida : {endH}:{endM}')
+        lcd.write_string(f'Salida : {endH}:{endM} ')
         lcd.cursor_pos = (3, 2)
         lcd.create_char(5, horaInitUno)
         lcd.write_string('\x05')
@@ -306,8 +306,7 @@ class LCD(object):
         lcd.cursor_pos = (3, 3)
         lcd.write_string('HUMBERTO BAQUE')
         lcd.cursor_pos = (1, 0)
-        texto='PROTOTIPO DE UN SISTEMA INTELIGENTE BASADO EN TECNOLOGIA IOT, PARA LA GESTION DE PARQUEADEROS VEHICULAR PUBLICOS DE LA CIUDAD DE GUAYAQUIL – ECUADOR.'
-        LCD.long_text(texto)
+        lcd.write_string('TESIS')
         
         
         

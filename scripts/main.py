@@ -1,5 +1,6 @@
 import DB
 import LCD
+import re
 import RPi.GPIO as GPIO
 import random
 import time
@@ -132,7 +133,7 @@ def btnSalir(act):
 
 def btnOpt(act):
     act['opt']+=1
-    if(act['opt']>3):
+    if(act['opt']>4):
         act['opt']=1
     clicks=act['opt']
     print(f'opciones: {clicks}')
@@ -178,6 +179,17 @@ def horaNow():
     nowM=int(time.strftime("%M"))
     nowS=int(time.strftime("%S"))
     return nowH,nowM,nowS
+
+def separarPlaca(placa):
+    patron = r'^([A-Z]{3})-(\d{3})$'
+    match = re.match(patron, placa)
+    if match:
+        letras = match.group(1)
+        numeros = match.group(2)
+        return letras, numeros
+    else:
+        return None, None
+
      
 def main():
     global auxHora,contHora
@@ -185,7 +197,8 @@ def main():
     #-------------------------------------------------
     p=usdPago['pago']
     dist=distancia()
-    distanAuto=DB.fireBase.getDistAuto()
+    print("distancia: ",dist)
+    distanAuto=100#DB.fireBase.getDistAuto()
     if(dist<=distanAuto):
         
         #Detecto el auto, entonces tomo el tiempo de registro del auto
@@ -193,47 +206,59 @@ def main():
         initH,initM=LCD.LCD.getHora()
         #Tiempo de espera mientras reconozco
         #obtengo los valores de la camara
-        detectPlaca=False
         #Aqui obtengo la matricula de los autos
-        while(detectPlaca==False):
-            LCD.LCD.showDetectando()
-            if(act['opt']==2):
-                detectPlaca==True
-                nPlaca=4079
-                aPlaca='GCB'
-                DB.fireBase.upPlacaAuto('GCB-4079')
-                break
-            
+        LCD.LCD.showDetectando()
+        while(True):
+            nombre_archivo = "placa.txt"
+            # Leer la placa desde el archivo
+            with open(nombre_archivo, "r") as archivo:
+                placaLeida = archivo.read()
+                patron = r'^[A-Z]{3}-\d{3}$'
+            if re.match(patron, placaLeida):
+                break  
+        placa=placaLeida
+        print("la placa reconocida es: ",placa)
+        DB.fireBase.upPlacaAuto(placa)
+        aPlaca,nPlaca = separarPlaca(placa)
         #Creo un nuevo usuario
         idU=crearUser()
         DB.fireBase.upIdUser(idU)
         #Aqui registro el pago
         while(True): #detectPlaca==True
-            if(act['opt']==3):
+            if(act['opt']==2):
                 break
             LCD.LCD.showPlacaDetectada(idU,aPlaca,nPlaca,usdPago['pago'])
-        
         #Muestro el panel de usuario 4/4
         sleep(1)
         LCD.LCD.clean()
         sleep(1)
         act['opt']=1
         while(True):
-            LCD.LCD.showDataUser(idU,aPlaca,nPlaca)
-            LCD.LCD.clean()
-            sleep(10)
-            costoH,costoM=LCD.LCD.showDataTarifa(usdPago['pago'])
-            LCD.LCD.clean()
-            sleep(10)
-            LCD.LCD.showAutor()
-            LCD.LCD.clean()
-            sleep(10)
-            endH,endM=LCD.LCD.getHoraEnd(initH,initM,costoH,costoM)
-            nowH,nowM,nowS=horaNow()
-            LCD.LCD.showContTiempo(endH,endM,nowH,nowM,nowS,initH,initM)
-            LCD.LCD.clean()
-            sleep(10)
+            if(act['opt']==1):
+                LCD.LCD.showDataUser(idU,aPlaca,nPlaca)
+            
+            if(act['opt']==2):
+                costoH,costoM=LCD.LCD.showDataTarifa(usdPago['pago'])
+            
+            
+            if(act['opt']==3):
+                endH,endM=LCD.LCD.getHoraEnd(initH,initM,costoH,costoM)
+                nowH,nowM,nowS=horaNow()
+                LCD.LCD.showContTiempo(endH,endM,nowH,nowM,nowS,initH,initM)
+            
+
+            if(act['opt']==4):
+                LCD.LCD.clean()
+                sleep(4)
+                act['opt']==1
+                #LCD.LCD.showAutor()
+            
+            if(act['opt']==0):
+                LCD.LCD.clean()
+                sleep(4)
                 
+                act['opt']==0
+                break
             
         #finalizo y reinicio el sistema nuevamente    
         LCD.LCD.clean()
@@ -252,8 +277,16 @@ updateData(dataB)
 distanAuto=DB.fireBase.getDistAuto()
     
 if __name__ == '__main__':
+    # Inicializar datos de placa
+    placa = " "
+    nombre_archivo = "placa.txt"
+    with open(nombre_archivo, "w") as archivo:
+        archivo.write(placa)
     while(True):
         main()
+        if(act['opt']==0):
+            LCD.LCD.clean()
+            break
         
         
     """
