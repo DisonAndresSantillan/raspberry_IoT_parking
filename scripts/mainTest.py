@@ -6,13 +6,13 @@ import time
 from time import sleep
 """Código principal 
 """ 
-dataB={'idAgent':'agentTran92','idSudo':'superU051','idUser':0,'llegadaHora':0,'pagoUsd':0,'placaAuto':'','distAuto':40}
-global btn1Usd, act, contPago, btn05Usd, btn025Usd, usdPago, auxHora, contHora
-act = {'opt':0};
+dataB={'idAgent':'agentTran92','idSudo':'superU051','idUser':0,'llegadaHora':0,'pagoUsd':0,'placaAuto':''}
+global btn1Usd, btn05Usd, btn025Usd, act, usdPago, auxHora, distanAuto
+act = {'opt':1};
 usdPago={'pago':0}
-auxHora=1
+auxHora=0
 contHora=0
-contPago = 5*60 #10 minutos
+distanAuto=0
 
 # CONFIG INTERRUPCIONES
 # 1usd
@@ -26,7 +26,7 @@ GPIO.add_event_detect(
     # Use lambda to pass parameters
     callback=lambda x: btn1Usd(usdPago),
     # Use bouncetime to avoid extra clicks
-    bouncetime=250  
+    bouncetime=500  
 )
 
 #-----------------------------------------------------------
@@ -41,7 +41,7 @@ GPIO.add_event_detect(
     # Use lambda to pass parameters
     callback=lambda x: btn05Usd(usdPago),
     # Use bouncetime to avoid extra clicks
-    bouncetime=250  
+    bouncetime=500  
 )
 
 #--------------------------------------------------------
@@ -56,7 +56,7 @@ GPIO.add_event_detect(
     # Use lambda to pass parameters
     callback=lambda x: btn025Usd(usdPago),
     # Use bouncetime to avoid extra clicks
-    bouncetime=250  
+    bouncetime=500  
 )
 
 #-----------------------------------------------------------
@@ -71,7 +71,7 @@ GPIO.add_event_detect(
     # Use lambda to pass parameters
     callback=lambda x: btnSalir(act),
     # Use bouncetime to avoid extra clicks
-    bouncetime=250  
+    bouncetime=500 
 )
 
 
@@ -87,7 +87,7 @@ GPIO.add_event_detect(
     # Use lambda to pass parameters
     callback=lambda x: btnOpt(act),
     # Use bouncetime to avoid extra clicks
-    bouncetime=250  
+    bouncetime=500
 )
 
 
@@ -125,13 +125,15 @@ def btn025Usd(usdPago):
 
 
 def btnSalir(act):
-    act['opt']=4
+    act['opt']=0
     print('press Salir')
+    LCD.LCD.clean()
+    sleep(1)
 
 def btnOpt(act):
     act['opt']+=1
-    if(act['opt']>4):
-        act['opt']=0
+    if(act['opt']>3):
+        act['opt']=1
     clicks=act['opt']
     print(f'opciones: {clicks}')
     
@@ -162,21 +164,20 @@ def updateData(db):
     DB.fireBase.upIdSudo(db['idSudo']) 
     DB.fireBase.upIdUser(db['idUser']) 
     DB.fireBase.upPago(db['pagoUsd']) 
-    DB.fireBase.upPlacaAuto(db['placaAuto']) 
+    DB.fireBase.upPlacaAuto(db['placaAuto'])
  
 def crearUser(): 
     user=random.randint(100, 999) 
     print(f'Codigo de Usuario: {user}') 
     return user
 
-def contPagoMin(contPago): 
-    contPagoM=int(contPago/60) 
-    contPagoS=int(contPago-contPagoM*60) 
-    contPago=contPago-1 
-    sleep(1) 
-    #print(f'tiempo: {contPagoM} : {contPagoS}') 
-    return contPago,contPagoM,contPagoS 
+
      
+def horaNow():
+    nowH=int(time.strftime("%H"))
+    nowM=int(time.strftime("%M"))
+    nowS=int(time.strftime("%S"))
+    return nowH,nowM,nowS
      
 def main():
     global auxHora,contHora
@@ -184,25 +185,85 @@ def main():
     #-------------------------------------------------
     p=usdPago['pago']
     dist=distancia()
-    print(f'usd: {p}, distancia ={dist}')
-    sleep(1)
+    distanAuto=DB.fireBase.getDistAuto()
+    if(dist<=distanAuto):
+        
+        #Detecto el auto, entonces tomo el tiempo de registro del auto
+        DB.fireBase.upHoraIn()
+        initH,initM=LCD.LCD.getHora()
+        #Tiempo de espera mientras reconozco
+        #obtengo los valores de la camara
+        detectPlaca=False
+        #Aqui obtengo la matricula de los autos
+        while(detectPlaca==False):
+            LCD.LCD.showDetectando()
+            if(act['opt']==2):
+                detectPlaca==True
+                nPlaca=4079
+                aPlaca='GCB'
+                DB.fireBase.upPlacaAuto('GCB-4079')
+                break
+            
+        #Creo un nuevo usuario
+        idU=crearUser()
+        DB.fireBase.upIdUser(idU)
+        #Aqui registro el pago
+        while(True): #detectPlaca==True
+            if(act['opt']==3):
+                break
+            LCD.LCD.showPlacaDetectada(idU,aPlaca,nPlaca,usdPago['pago'])
+        
+        #Muestro el panel de usuario 4/4
+        sleep(1)
+        LCD.LCD.clean()
+        sleep(1)
+        act['opt']=1
+        while(True):
+            LCD.LCD.showDataUser(idU,aPlaca,nPlaca)
+            LCD.LCD.clean()
+            sleep(10)
+            costoH,costoM=LCD.LCD.showDataTarifa(usdPago['pago'])
+            LCD.LCD.clean()
+            sleep(10)
+            LCD.LCD.showAutor()
+            LCD.LCD.clean()
+            sleep(10)
+            endH,endM=LCD.LCD.getHoraEnd(initH,initM,costoH,costoM)
+            nowH,nowM,nowS=horaNow()
+            LCD.LCD.showContTiempo(endH,endM,nowH,nowM,nowS,initH,initM)
+            LCD.LCD.clean()
+            sleep(10)
+                
+            
+        #finalizo y reinicio el sistema nuevamente    
+        LCD.LCD.clean()
+        sleep(1)
+        #Reinicio el sistema
+        auxHora=0
+        contHora=0
+        updateData(dataB)       
+    else:
+        LCD.LCD.showDisponible()
+ 
+        
+#Inicialización
+LCD.LCD.clean()
+updateData(dataB)
+distanAuto=DB.fireBase.getDistAuto()
+    
+if __name__ == '__main__':
+    while(True):
+        main()
+        
+        
     """
     #detecto si aparecio un auto y se esta estacionanado 
     detectPlaca=False
     if(act['opt']>=1):
-        if(auxHora==1):
-            #Envio la hora de inicio
-            DB.fireBase.upHoraIn()
-            initH,initM=LCD.LCD.getHora()
-            auxHora+=1
         #Obtengo los valores de la placa mediante la camara
         while(True):
             if(act['opt']==2):
-                #Aqui debo registrar la placa y el reconocimiento de la misma con Open CV
-                detectPlaca==True
-                nPlaca=123
-                aPlaca='ABR'
-                DB.fireBase.upPlacaAuto('ABR-123')
+
                 break
             LCD.LCD.showDetectando()
         #creo el nuevo usuario
@@ -236,25 +297,4 @@ def main():
             #break
         #------------------------------------------------------------------------------------------------
                 
-            
-        LCD.LCD.clean()
-        sleep(1)
-        #Reinicio el sistema
-        auxHora=0
-        contHora=0
-        updateData(dataB)
-                
-    else:
-        LCD.LCD.showDisponible()
-    
-    """
- 
-        
-#Inicialización
-LCD.LCD.clean()
-updateData(dataB)
-    
-if __name__ == '__main__':
-    while(True):
-        main()
-        
+    """ 

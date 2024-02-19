@@ -65,8 +65,8 @@ class OpenCv(object):
         
     
 def main():
-    #OpenCv.captVideoTexto()
-    OpenCv.captFoto()
+    OpenCv.captVideoTexto()
+    #OpenCv.captFoto()
     #OpenCv.captVideo()
 
 if __name__ == '__main__':

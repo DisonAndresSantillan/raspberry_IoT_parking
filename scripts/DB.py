@@ -8,7 +8,7 @@ auth=firebase_admin.initialize_app(cred,{
     'databaseURL':'https://rasp-iot-parquimetro-default-rtdb.firebaseio.com/'
 }) 
  
-dataB={'idAgent':345,'idSudo':'343fskdf','idUser':159,'llegadaHora':21048,'pagoUsd':1050,'placaAuto':'ASR-123'}
+dataB={'idAgent':345,'idSudo':'343fskdf','idUser':159,'llegadaHora':21048,'pagoUsd':1050,'placaAuto':'ASR-123','distAuto':40}
 
 class fireBase(object):
     def __init__(self):
@@ -107,6 +107,15 @@ class fireBase(object):
         dato=dataB['idAgent']
         print(f'Dato del agente es: {dato}')
         
+    def getDistAuto(): 
+        """ 
+        Obtiene la distancia de reconocimiento de los autos 
+        """ 
+        ref = db.reference('/rasp_IoT_fireBase/distAuto')#db.reference(nombreBase) 
+        dist=ref.get()
+        #print(f'Distancia configurada es: {dist} cm')
+        return dist
+        
         
 def main():
     pass
@@ -114,11 +123,11 @@ def main():
     #fireBase.upIdUser(159)
     #fireBase.upIdAgent(345)
     #fireBase.upIdSudo('343fskdf')
-    fireBase.upHoraIn()
+    #fireBase.upHoraIn()
     #fireBase.upPago(1.25)
     #fireBase.upPlacaAuto('ASR-123')
+    fireBase.getDistAuto()
     
         
 if __name__ == '__main__':
-    pass
     main()

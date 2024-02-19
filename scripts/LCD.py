@@ -118,6 +118,9 @@ class LCD(object):
     def write_to_lcd(lcd, framebuffer, num_cols):
         lcd.home()
         for row in framebuffer:
+            lcd.cursor_pos = (0, 7)
+            lcd.write_string('TESIS:')
+            lcd.cursor_pos=(1,0)
             lcd.write_string(row.ljust(num_cols)[:num_cols])
             lcd.write_string('\r\n')
     def long_text(text):
@@ -126,7 +129,7 @@ class LCD(object):
         for i in range(len(text) - 20 + 1):
             framebuffer[1] = text[i:i+20]
             LCD.write_to_lcd(lcd, framebuffer, 20)
-            sleep(0.8)
+            sleep(0.4)
     def showDataUser(idU,abc,num):
         lcd.cursor_pos = (0, 2)
         lcd.write_string(f'DATOS DE USUARIO:')
@@ -201,6 +204,11 @@ class LCD(object):
         while(i<=19): 
             lcd.cursor_pos = (0, i)
             lcd.write_string('\x04')
+            if(i<=14 and i>=5):
+                pass
+            else:
+                lcd.cursor_pos = (3, i)
+                lcd.write_string('\x04')
             i+=1
         i=0
         while(i<=3):
@@ -213,17 +221,11 @@ class LCD(object):
         lcd.write_string('ESPACIO')
         lcd.cursor_pos = (2, 5)
         lcd.write_string('DISPONIBLE')
-        lcd.cursor_pos = (3, 3)
+        lcd.cursor_pos = (3, 6)
         initH=time.strftime("%H")
         initM=time.strftime("%M")
         initS=time.strftime("%S")
-        lcd.create_char(5, horaInitUno)
-        lcd.write_string('\x05')
-        lcd.create_char(6, horaInitMitad)
-        lcd.write_string('\x06')
-        lcd.create_char(7, horaInitDos)
-        lcd.write_string('\x07')
-        lcd.write_string(f'   {initH}:{initM}:{initS}')
+        lcd.write_string(f'{initH}:{initM}:{initS}')
 
     def showPago(usd):
         lcd.create_char(4, placaTres)
@@ -258,18 +260,16 @@ class LCD(object):
         lcd.cursor_pos = (2, 1)
         lcd.write_string('Reconociendo Placa')
         
-    def showHoraEnd(initH,initM,costoH,costoM):
+    def getHoraEnd(initH,initM,costoH,costoM):
         endH=0;endM=0
         endM=int(initM)+int(costoM)
         if( endM>60):
             endM=int(endM)-60
             endH+=1
         endH=int(endH)+int(initH)+int(costoH)
-        lcd.cursor_pos = (3, 0)
-        lcd.write_string(f'Fin:{endH}H{endM}')
         return endH,endM
 
-    def showContTiempo(endH,endM,nowH,nowM,nowS):
+    def showContTiempo(endH,endM,nowH,nowM,nowS,initH,initM):
         contNow=int(nowH*3600+nowM*60+nowS)
         contEnd=int(endH*3600+endM*60)
         cont=int(contEnd-contNow)
@@ -279,11 +279,9 @@ class LCD(object):
         lcd.cursor_pos = (0, 1)
         lcd.write_string('TIEMPO DISPONIBLE')
         lcd.cursor_pos = (1, 3)
-        lcd.write_string(f'Entrada : 12H00')
+        lcd.write_string(f'Entrada : {initH}:{initM}')
         lcd.cursor_pos = (2, 4)
-        lcd.write_string(f'Salida : 12H00')
-        
-        
+        lcd.write_string(f'Salida : {endH}:{endM}')
         lcd.cursor_pos = (3, 2)
         lcd.create_char(5, horaInitUno)
         lcd.write_string('\x05')
@@ -293,31 +291,52 @@ class LCD(object):
         lcd.write_string('\x07')
         lcd.write_string(f' Time:{contH}:{contM}:{contS}')
         return cont
+    
+    def showAutor():
+        i=0
+        while(i<=19):
+            if(i>=5 and i<=14):
+                pass
+            else:
+                lcd.cursor_pos = (0, i)
+                lcd.write_string('\x04')
+            lcd.cursor_pos = (2, i)
+            lcd.write_string('-')
+            i+=1
+        lcd.cursor_pos = (3, 3)
+        lcd.write_string('HUMBERTO BAQUE')
+        lcd.cursor_pos = (1, 0)
+        texto='PROTOTIPO DE UN SISTEMA INTELIGENTE BASADO EN TECNOLOGIA IOT, PARA LA GESTION DE PARQUEADEROS VEHICULAR PUBLICOS DE LA CIUDAD DE GUAYAQUIL – ECUADOR.'
+        LCD.long_text(texto)
+        
         
         
 
 def main():
     #La placa debe mostrarse del algoritmo de reconocimiento
     
-    LCD.showContTiempo(20,15,19,49,10)
-    sleep(15)
-    LCD.clean()
-    num=549
-    abe='PRG'
-    LCD.showDataUser(123,abe,num)
+    #LCD.showContTiempo(20,15,19,49,10)
+    #sleep(15)
+    #LCD.clean()
+    #-------------------------------------------
+    #num=549
+    #abe='PRG'
+    #LCD.showDataUser(123,abe,num)
+    #-------------------------------------------
     #costo tarifa hora hora
-    sleep(5)
-    LCD.clean()
-    LCD.showDataTarifa(1.05)
-    sleep(5)
-    LCD.clean()
-    LCD.showDisponible()
-    sleep(5)
-    LCD.clean()
-    #text='Entrada: 15H00 -> Salida: 14H19'
-    LCD.showContTiempo(20,15,19,49,10)
-    sleep(5)
-    LCD.clean()
+    #sleep(5)
+    #LCD.clean()
+    #LCD.showDataTarifa(1.05)
+    #sleep(5)
+    #LCD.clean()
+    #-------------------------------------------
+    #LCD.showDisponible()
+    #sleep(5)
+    #LCD.clean()
+    #LCD.showContTiempo(20,15,19,49,10)
+    #sleep(5)
+    #LCD.clean()
+    LCD.showAutor()
     
     
 if __name__ == "__main__":
